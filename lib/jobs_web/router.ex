@@ -7,7 +7,8 @@ defmodule JobsWeb.Router do
 
   scope "/api", JobsWeb do
     pipe_through :api
-    resources "/tasks", TaskController, only: [:new, :index, :show]
+    resources "/tasks", TaskController, only: [:create, :index, :show]
+    resources "/jobs", JobController, only: [:new, :index, :show]
   end
 
   # Enable LiveDashboard in development
