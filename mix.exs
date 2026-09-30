@@ -10,7 +10,24 @@ defmodule Jobs.MixProject do
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
-      listeners: [Phoenix.CodeReloader]
+      listeners: [Phoenix.CodeReloader],
+      dialyzer: dialyzer()
+    ]
+  end
+
+  defp dialyzer do
+    [
+      flags: [
+        :error_handling,
+        :extra_return,
+        :missing_return,
+        :underspecs,
+        :unmatched_returns,
+        :unknown,
+        :overlapping_contract,
+        :opaque_union
+      ],
+      plt_file: {:no_warn, "priv/plts/dialyzer.plt"}
     ]
   end
 

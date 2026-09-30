@@ -33,23 +33,23 @@ defmodule JobsWeb.JobControllerTest do
   }
 
   @create_responce_tasks [
-      %{
-        "name" => "task-1",
-        "command" => "touch /tmp/file1"
-      },
-      %{
-        "name" => "task-3",
-        "command" => "echo 'Hello World!' > /tmp/file1"
-      },
-      %{
-        "name" => "task-2",
-        "command" => "cat /tmp/file1"
-      },
-      %{
-        "name" => "task-4",
-        "command" => "rm /tmp/file1"
-      }
-    ]
+    %{
+      "name" => "task-1",
+      "command" => "touch /tmp/file1"
+    },
+    %{
+      "name" => "task-3",
+      "command" => "echo 'Hello World!' > /tmp/file1"
+    },
+    %{
+      "name" => "task-2",
+      "command" => "cat /tmp/file1"
+    },
+    %{
+      "name" => "task-4",
+      "command" => "rm /tmp/file1"
+    }
+  ]
 
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
@@ -68,9 +68,11 @@ defmodule JobsWeb.JobControllerTest do
 
       assert %{
                "id" => id,
-        "tasks" => @create_responce_tasks
-      } = json_response(conn, 201)
-      assert String.length(id) == 36 # A bit ugli check if it's a UUID
+               "tasks" => @create_responce_tasks
+             } = json_response(conn, 201)
+
+      # A bit ugli check if it's a UUID
+      assert String.length(id) == 36
     end
 
     test "renders job to bash when data is valid and headers are correct", %{conn: conn} do
@@ -125,11 +127,12 @@ defmodule JobsWeb.JobControllerTest do
           }
         ]
       }
+
       conn = post(conn, ~p"/api/jobs", job: create_attrs_duplicated)
 
       assert json_response(conn, 422)["errors"] == %{
-        "tasks" => ["Task names must be unique"]
-      }
+               "tasks" => ["Task names must be unique"]
+             }
     end
 
     test "renders job with missed dependet tasks returns error", %{conn: conn} do
@@ -138,8 +141,7 @@ defmodule JobsWeb.JobControllerTest do
           %{
             "name" => "task-2",
             "command" => "cat /tmp/file1",
-            "requires" => [
-            ]
+            "requires" => []
           },
           %{
             "name" => "task-3",
@@ -163,9 +165,10 @@ defmodule JobsWeb.JobControllerTest do
       conn = post(conn, ~p"/api/jobs", job: create_attrs_missed)
 
       assert json_response(conn, 422)["errors"] == %{
-        "tasks" => ["Some tasks have missing dependencies"]
-      }
+               "tasks" => ["Some tasks have missing dependencies"]
+             }
     end
+
     test "renders job with cyclic dependet tasks returns error", %{conn: conn} do
       create_attrs_cyclic = %{
         "tasks" => [
@@ -202,8 +205,8 @@ defmodule JobsWeb.JobControllerTest do
       conn = post(conn, ~p"/api/jobs", job: create_attrs_cyclic)
 
       assert json_response(conn, 422)["errors"] == %{
-        "tasks" => ["Tasks have circular dependencies"]
-      }
+               "tasks" => ["Tasks have circular dependencies"]
+             }
     end
   end
 end

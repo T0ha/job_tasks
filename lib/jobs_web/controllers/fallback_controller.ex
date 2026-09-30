@@ -7,6 +7,7 @@ defmodule JobsWeb.FallbackController do
   use JobsWeb, :controller
 
   # This clause handles errors returned by Ecto's insert/update/delete.
+  @spec call(Plug.Conn.t(), {:error, Ecto.Changeset.t()}) :: Plug.Conn.t()
   def call(conn, {:error, %Ecto.Changeset{} = changeset}) do
     conn
     |> put_status(:unprocessable_entity)
@@ -15,6 +16,7 @@ defmodule JobsWeb.FallbackController do
   end
 
   # This clause is an example of how to handle resources that cannot be found.
+  @spec call(Plug.Conn.t(), {:error, :not_found}) :: Plug.Conn.t()
   def call(conn, {:error, :not_found}) do
     conn
     |> put_status(:not_found)

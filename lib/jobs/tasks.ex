@@ -7,6 +7,7 @@ defmodule Jobs.Tasks do
   alias Jobs.Repo
 
   alias Jobs.Tasks.Task
+  alias Jobs.Tasks.Job
 
   @doc """
   Returns the list of tasks.
@@ -17,6 +18,7 @@ defmodule Jobs.Tasks do
       [%Task{}, ...]
 
   """
+  @spec list_tasks() :: [Task.t()]
   def list_tasks do
     Repo.all(Task)
   end
@@ -35,6 +37,7 @@ defmodule Jobs.Tasks do
       ** (Ecto.NoResultsError)
 
   """
+  @spec get_task!(term()) :: Task.t()
   def get_task!(id), do: Repo.get!(Task, id)
 
   @doc """
@@ -49,6 +52,7 @@ defmodule Jobs.Tasks do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec create_task(map()) :: {:ok, Task.t()} | {:error, Ecto.Changeset.t(Task.t())}
   def create_task(attrs) do
     %Task{}
     |> Task.changeset(attrs)
@@ -67,6 +71,7 @@ defmodule Jobs.Tasks do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec update_task(Task.t(), map()) :: {:ok, Task.t()} | {:error, Ecto.Changeset.t(Task.t())}
   def update_task(%Task{} = task, attrs) do
     task
     |> Task.changeset(attrs)
@@ -85,6 +90,7 @@ defmodule Jobs.Tasks do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec delete_task(Task.t()) :: {:ok, Task.t()} | {:error, Ecto.Changeset.t(Task.t())}
   def delete_task(%Task{} = task) do
     Repo.delete(task)
   end
@@ -98,11 +104,10 @@ defmodule Jobs.Tasks do
       %Ecto.Changeset{data: %Task{}}
 
   """
+  @spec change_task(Task.t(), map()) :: Ecto.Changeset.t(Task.t())
   def change_task(%Task{} = task, attrs \\ %{}) do
     Task.changeset(task, attrs)
   end
-
-  alias Jobs.Tasks.Job
 
   @doc """
   Returns the list of jobs.
@@ -113,6 +118,7 @@ defmodule Jobs.Tasks do
       [%Job{}, ...]
 
   """
+  @spec list_jobs() :: [Job.t()]
   def list_jobs do
     Task
     |> Repo.all()
@@ -131,6 +137,7 @@ defmodule Jobs.Tasks do
       %Job{}
 
   """
+  @spec get_job!(Ecto.UUID.t()) :: Job.t()
   def get_job!(id) do
     query = from t in Task, where: t.job_uuid == ^id
 
@@ -152,6 +159,7 @@ defmodule Jobs.Tasks do
       {:error, ...}
 
   """
+  @spec create_job(map()) :: {:ok, Job.t()} | {:error, Ecto.Changeset.t(Job.t())}
   def create_job(attrs) do
     %Job{id: Ecto.UUID.generate()}
     |> Job.changeset(attrs)
@@ -159,15 +167,12 @@ defmodule Jobs.Tasks do
     |> insert_tasks()
   end
 
-  defp insert_tasks({:error, _e} = error), do: error
-  defp insert_tasks({:ok, %Job{} = job}) do
-    job
-    |> Map.update(:tasks, [], fn tasks ->
-      Enum.map(tasks, fn task ->
-        Repo.insert!(task, returning: true)
-      end)
-    end)
-    |> then(&({:ok, &1}))
-  end
+  @spec insert_tasks({:ok, Job.t()} | {:error, Ecto.Changeset.t(Job.t())}) ::
+          {:ok, Job.t()} | {:error, Ecto.Changeset.t(Job.t())}
+  defp insert_tasks({:error, _changeset} = error), do: error
 
+  defp insert_tasks({:ok, %Job{tasks: tasks} = job}) do
+    inserted_tasks = Enum.map(tasks, &Repo.insert!(&1, returning: true))
+    {:ok, %{job | tasks: inserted_tasks}}
+  end
 end

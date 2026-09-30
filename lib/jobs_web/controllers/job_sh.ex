@@ -8,6 +8,7 @@ defmodule JobsWeb.JobSH do
   @doc """
   Renders a job as a bash script.
   """
+  @spec show(%{job: Job.t()}) :: String.t()
   def show(%{job: %Job{tasks: tasks}}) do
     [
       "#!/usr/bin/env bash",
