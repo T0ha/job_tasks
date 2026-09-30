@@ -1,9 +1,6 @@
 defmodule JobsWeb.JobControllerTest do
   use JobsWeb.ConnCase
 
-  import Jobs.TasksFixtures
-  alias Jobs.Tasks.Job
-
   @create_attrs %{
     "tasks" => [
       %{
@@ -77,7 +74,7 @@ defmodule JobsWeb.JobControllerTest do
     end
 
     test "renders job to bash when data is valid and headers are correct", %{conn: conn} do
-      conn = 
+      conn =
         conn
         |> put_req_header("accept", "text/x-shellscript")
         |> post(~p"/api/jobs", job: @create_attrs)

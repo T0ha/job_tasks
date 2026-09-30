@@ -1,5 +1,5 @@
 defmodule JobsWeb.JobJSON do
-  alias Jobs.Tasks.Job
+  alias Jobs.Tasks.{Job, Task}
 
   @doc """
   Renders a list of jobs.
@@ -18,7 +18,14 @@ defmodule JobsWeb.JobJSON do
   defp data(%Job{} = job) do
     %{
       id: job.id,
-      tasks: JobsWeb.TaskJSON.index(%{tasks: job.tasks})
+      tasks: Enum.map(job.tasks, &task_data/1)
+    }
+  end
+
+  defp task_data(%Task{} = task) do
+    %{
+      name: task.name,
+      command: task.command
     }
   end
 end

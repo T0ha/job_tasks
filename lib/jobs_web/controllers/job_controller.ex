@@ -13,7 +13,6 @@ defmodule JobsWeb.JobController do
 
   def create(conn, %{"job" => job_params}) do
     with {:ok, %Job{} = job} <- Tasks.create_job(job_params) do
-      IO.inspect(job, label: "Created job")
       conn
       |> put_status(:created)
       |> put_resp_header("location", ~p"/api/jobs/#{job}")
@@ -24,21 +23,5 @@ defmodule JobsWeb.JobController do
   def show(conn, %{"id" => id}) do
     job = Tasks.get_job!(id)
     render(conn, :show, job: job)
-  end
-
-  def update(conn, %{"id" => id, "job" => job_params}) do
-    job = Tasks.get_job!(id)
-
-    with {:ok, %Job{} = job} <- Tasks.update_job(job, job_params) do
-      render(conn, :show, job: job)
-    end
-  end
-
-  def delete(conn, %{"id" => id}) do
-    job = Tasks.get_job!(id)
-
-    with {:ok, %Job{}} <- Tasks.delete_job(job) do
-      send_resp(conn, :no_content, "")
-    end
   end
 end

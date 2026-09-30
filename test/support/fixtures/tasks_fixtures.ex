@@ -37,9 +37,9 @@ defmodule Jobs.TasksFixtures do
     {:ok, job} =
       attrs
       |> Enum.into(%{
-        command: "some command",
-        job_uuid: "7488a646-e31f-11e4-aace-600308960662",
-        name: unique_job_name()
+        "tasks" => [
+          %{"name" => unique_job_name(), "command" => "some command"}
+        ]
       })
       |> Jobs.Tasks.create_job()
 

@@ -1,7 +1,6 @@
 defmodule Jobs.Tasks.Job do
   use Ecto.Schema
   import Ecto.Changeset
-  
 
   alias Jobs.Tasks.Task
 
@@ -17,7 +16,6 @@ defmodule Jobs.Tasks.Job do
     |> validate_unique_task_names()
     |> validate_required_tasks()
   end
-
 
   defp validate_unique_task_names(changeset) do
     tasks = get_field(changeset, :tasks, [])

@@ -75,7 +75,7 @@ defmodule Jobs.TasksTest do
 
     import Jobs.TasksFixtures
 
-    @invalid_attrs %{command: nil, name: nil, job_uuid: nil}
+    @invalid_attrs %{"tasks" => [%{"name" => nil, "command" => nil}]}
 
     test "list_jobs/0 returns all jobs" do
       job = job_fixture()
@@ -88,52 +88,14 @@ defmodule Jobs.TasksTest do
     end
 
     test "create_job/1 with valid data creates a job" do
-      valid_attrs = %{
-        command: "some command",
-        name: "some name",
-        job_uuid: "7488a646-e31f-11e4-aace-600308960662"
-      }
+      valid_attrs = %{"tasks" => [%{"name" => "some name", "command" => "some command"}]}
 
       assert {:ok, %Job{} = job} = Tasks.create_job(valid_attrs)
-      assert job.command == "some command"
-      assert job.name == "some name"
-      assert job.job_uuid == "7488a646-e31f-11e4-aace-600308960662"
+      assert [%{name: "some name", command: "some command"}] = job.tasks
     end
 
     test "create_job/1 with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{}} = Tasks.create_job(@invalid_attrs)
-    end
-
-    test "update_job/2 with valid data updates the job" do
-      job = job_fixture()
-
-      update_attrs = %{
-        command: "some updated command",
-        name: "some updated name",
-        job_uuid: "7488a646-e31f-11e4-aace-600308960668"
-      }
-
-      assert {:ok, %Job{} = job} = Tasks.update_job(job, update_attrs)
-      assert job.command == "some updated command"
-      assert job.name == "some updated name"
-      assert job.job_uuid == "7488a646-e31f-11e4-aace-600308960668"
-    end
-
-    test "update_job/2 with invalid data returns error changeset" do
-      job = job_fixture()
-      assert {:error, %Ecto.Changeset{}} = Tasks.update_job(job, @invalid_attrs)
-      assert job == Tasks.get_job!(job.id)
-    end
-
-    test "delete_job/1 deletes the job" do
-      job = job_fixture()
-      assert {:ok, %Job{}} = Tasks.delete_job(job)
-      assert_raise Ecto.NoResultsError, fn -> Tasks.get_job!(job.id) end
-    end
-
-    test "change_job/1 returns a job changeset" do
-      job = job_fixture()
-      assert %Ecto.Changeset{} = Tasks.change_job(job)
     end
   end
 end

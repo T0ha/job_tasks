@@ -39,6 +39,8 @@ defmodule Jobs.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
+      {:credo, "~> 1.0", only: [:dev, :test], runtime: false},
       {:libgraph, "~> 0.16"},
       {:ex_machina, "~> 2.0"},
       {:phoenix, "~> 1.8.3"},

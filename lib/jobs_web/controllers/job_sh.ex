@@ -1,4 +1,8 @@
 defmodule JobsWeb.JobSH do
+  @moduledoc """
+  Renders `Jobs.Tasks.Job` structs as bash scripts.
+  """
+
   alias Jobs.Tasks.Job
 
   @doc """

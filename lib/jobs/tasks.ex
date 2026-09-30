@@ -114,13 +114,16 @@ defmodule Jobs.Tasks do
 
   """
   def list_jobs do
-    Repo.all(from t in Task, group_by: t.job_uuid, select: t.job_uuid)
+    Task
+    |> Repo.all()
+    |> Enum.group_by(& &1.job_uuid)
+    |> Enum.map(fn {job_uuid, tasks} -> %Job{id: job_uuid, tasks: tasks} end)
   end
 
   @doc """
   Gets a single job.
 
-  Raises if the Job does not exist.
+  Raises `Ecto.NoResultsError` if the Job does not exist.
 
   ## Examples
 
@@ -128,7 +131,14 @@ defmodule Jobs.Tasks do
       %Job{}
 
   """
-  def get_job!(id), do: raise("TODO")
+  def get_job!(id) do
+    query = from t in Task, where: t.job_uuid == ^id
+
+    case Repo.all(query) do
+      [] -> raise Ecto.NoResultsError, queryable: query
+      tasks -> %Job{id: id, tasks: tasks}
+    end
+  end
 
   @doc """
   Creates a job.
@@ -147,7 +157,6 @@ defmodule Jobs.Tasks do
     |> Job.changeset(attrs)
     |> Ecto.Changeset.apply_action(:insert)
     |> insert_tasks()
-    
   end
 
   defp insert_tasks({:error, _e} = error), do: error
@@ -161,48 +170,4 @@ defmodule Jobs.Tasks do
     |> then(&({:ok, &1}))
   end
 
-  @doc """
-  Updates a job.
-
-  ## Examples
-
-      iex> update_job(job, %{field: new_value})
-      {:ok, %Job{}}
-
-      iex> update_job(job, %{field: bad_value})
-      {:error, ...}
-
-  """
-  def update_job(%Job{} = job, attrs) do
-    raise "TODO"
-  end
-
-  @doc """
-  Deletes a Job.
-
-  ## Examples
-
-      iex> delete_job(job)
-      {:ok, %Job{}}
-
-      iex> delete_job(job)
-      {:error, ...}
-
-  """
-  def delete_job(%Job{} = job) do
-    raise "TODO"
-  end
-
-  @doc """
-  Returns a data structure for tracking job changes.
-
-  ## Examples
-
-      iex> change_job(job)
-      %Todo{...}
-
-  """
-  def change_job(%Job{} = job, _attrs \\ %{}) do
-    raise "TODO"
-  end
 end
