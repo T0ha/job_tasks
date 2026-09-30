@@ -12,15 +12,13 @@ defmodule JobsWeb.JobJSON do
   Renders a single job.
   """
   def show(%{job: job}) do
-    %{data: data(job)}
+    data(job)
   end
 
   defp data(%Job{} = job) do
     %{
       id: job.id,
-      name: job.name,
-      command: job.command,
-      job_uuid: job.job_uuid
+      tasks: JobsWeb.TaskJSON.index(%{tasks: job.tasks})
     }
   end
 end

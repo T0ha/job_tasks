@@ -61,7 +61,7 @@ defmodule JobsWeb.JobControllerTest do
   describe "index" do
     test "lists all jobs", %{conn: conn} do
       conn = get(conn, ~p"/api/jobs")
-      assert json_response(conn, 200)["data"] == []
+      assert json_response(conn, 200) == []
     end
   end
 
@@ -72,7 +72,7 @@ defmodule JobsWeb.JobControllerTest do
       assert %{
                "id" => id,
         "tasks" => @create_responce_tasks
-      } = json_response(conn, 201)["data"]
+      } = json_response(conn, 201)
       assert String.length(id) == 36 # A bit ugli check if it's a UUID
     end
 

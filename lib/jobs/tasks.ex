@@ -143,7 +143,9 @@ defmodule Jobs.Tasks do
 
   """
   def create_job(attrs) do
-    raise "TODO"
+    %Job{id: Ecto.UUID.generate()}
+    |> Job.changeset(attrs)
+    |> Ecto.Changeset.apply_action(:insert)
   end
 
   @doc """

@@ -2,6 +2,9 @@ defmodule Jobs.Tasks.Task do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @allowable_fields ~w(name command job_uuid)a
+  @required_fields @allowable_fields
+
   schema "tasks" do
     field :name, :string
     field :command, :string
@@ -13,8 +16,8 @@ defmodule Jobs.Tasks.Task do
   @doc false
   def changeset(task, attrs) do
     task
-    |> cast(attrs, [:name, :command, :job_uuid])
-    |> validate_required([:name, :command, :job_uuid])
+    |> cast(attrs, @allowable_fields)
+    |> validate_required(@required_fields)
     |> unique_constraint(:name)
   end
 end
