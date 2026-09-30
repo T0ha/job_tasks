@@ -145,7 +145,23 @@ defmodule Jobs.Tasks do
   def create_job(attrs) do
     %Job{id: Ecto.UUID.generate()}
     |> Job.changeset(attrs)
+    |> IO.inspect(label: "Job changeset")
     |> Ecto.Changeset.apply_action(:insert)
+    |> IO.inspect(label: "Job after applying changes")
+    |> insert_tasks()
+    
+  end
+
+  defp insert_tasks({:error, _e} = error), do: error
+  defp insert_tasks({:ok, %Job{} = job}) do
+    job
+    |> Map.update(:tasks, [], fn tasks ->
+      Enum.map(tasks, fn task ->
+        Repo.insert!(task, returning: true)
+      end)
+    end)
+    |> then(&({:ok, &1}))
+    |> IO.inspect(label: "Job after inserting tasks")
   end
 
   @doc """

@@ -2,13 +2,15 @@ defmodule Jobs.Tasks.Task do
   use Ecto.Schema
   import Ecto.Changeset
 
-  @allowable_fields ~w(name command job_uuid)a
+  @allowable_fields ~w(name command job_uuid requires)a
   @required_fields @allowable_fields
 
   schema "tasks" do
     field :name, :string
     field :command, :string
     field :job_uuid, Ecto.UUID
+
+    field :requires, {:array, :string}, default: []
 
     timestamps(type: :utc_datetime)
   end

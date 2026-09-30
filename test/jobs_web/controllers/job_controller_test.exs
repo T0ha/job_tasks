@@ -130,9 +130,45 @@ defmodule JobsWeb.JobControllerTest do
       }
       conn = post(conn, ~p"/api/jobs", job: create_attrs_duplicated)
 
-      assert json_response(conn, 422)["errors"] == %{}
+      assert json_response(conn, 422)["errors"] == %{
+        "tasks" => ["Task names must be unique"]
+      }
     end
 
+    test "renders job with missed dependet tasks returns error", %{conn: conn} do
+      create_attrs_missed = %{
+        "tasks" => [
+          %{
+            "name" => "task-2",
+            "command" => "cat /tmp/file1",
+            "requires" => [
+            ]
+          },
+          %{
+            "name" => "task-3",
+            "command" => "echo 'Hello World!' > /tmp/file1",
+            "requires" => [
+              "task-1",
+              "task-2"
+            ]
+          },
+          %{
+            "name" => "task-4",
+            "command" => "rm /tmp/file1",
+            "requires" => [
+              "task-2",
+              "task-3"
+            ]
+          }
+        ]
+      }
+
+      conn = post(conn, ~p"/api/jobs", job: create_attrs_missed)
+
+      assert json_response(conn, 422)["errors"] == %{
+        "tasks" => ["Some tasks have missing dependencies"]
+      }
+    end
     test "renders job with cyclic dependet tasks returns error", %{conn: conn} do
       create_attrs_cyclic = %{
         "tasks" => [
@@ -168,7 +204,9 @@ defmodule JobsWeb.JobControllerTest do
 
       conn = post(conn, ~p"/api/jobs", job: create_attrs_cyclic)
 
-      assert json_response(conn, 422)["errors"] == %{}
+      assert json_response(conn, 422)["errors"] == %{
+        "tasks" => ["Tasks have circular dependencies"]
+      }
     end
   end
 end

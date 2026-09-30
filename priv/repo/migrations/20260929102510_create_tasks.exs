@@ -6,6 +6,7 @@ defmodule Jobs.Repo.Migrations.CreateTasks do
       add :name, :string
       add :command, :string
       add :job_uuid, :uuid
+      add :requires, {:array, :string}, default: []
 
       timestamps(type: :utc_datetime)
     end

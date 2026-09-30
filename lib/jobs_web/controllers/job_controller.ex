@@ -13,6 +13,7 @@ defmodule JobsWeb.JobController do
 
   def create(conn, %{"job" => job_params}) do
     with {:ok, %Job{} = job} <- Tasks.create_job(job_params) do
+      IO.inspect(job, label: "Created job")
       conn
       |> put_status(:created)
       |> put_resp_header("location", ~p"/api/jobs/#{job}")

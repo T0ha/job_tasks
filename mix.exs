@@ -39,6 +39,7 @@ defmodule Jobs.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:libgraph, "~> 0.16"},
       {:ex_machina, "~> 2.0"},
       {:phoenix, "~> 1.8.3"},
       {:phoenix_ecto, "~> 4.5"},
