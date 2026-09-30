@@ -5,7 +5,7 @@ defmodule JobsWeb.JobJSON do
   Renders a list of jobs.
   """
   def index(%{jobs: jobs}) do
-    %{data: for(job <- jobs, do: data(job))}
+    for(job <- jobs, do: data(job))
   end
 
   @doc """

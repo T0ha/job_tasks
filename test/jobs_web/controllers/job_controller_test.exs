@@ -82,15 +82,15 @@ defmodule JobsWeb.JobControllerTest do
         |> put_req_header("accept", "text/x-shellscript")
         |> post(~p"/api/jobs", job: @create_attrs)
 
-      response_bash = ~w(
-        #!/usr/bin/env bash
-        touch /tmp/file1
-        echo "Hello World!" > /tmp/file1
-        cat /tmp/file1
-        rm /tmp/file1
-      )
+      response_bash = """
+      #!/usr/bin/env bash
+      touch /tmp/file1
+      echo 'Hello World!' > /tmp/file1
+      cat /tmp/file1
+      rm /tmp/file1\
+      """
 
-      assert  response(conn, 201) == response_bash
+      assert response(conn, 201) == response_bash
     end
 
     test "renders job with duplicated task names returns error", %{conn: conn} do

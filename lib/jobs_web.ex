@@ -37,7 +37,7 @@ defmodule JobsWeb do
 
   def controller do
     quote do
-      use Phoenix.Controller, formats: [:html, :json]
+      use Phoenix.Controller, formats: [:html, :json, :sh]
 
       use Gettext, backend: JobsWeb.Gettext
 

@@ -2,12 +2,11 @@ defmodule JobsWeb.Router do
   use JobsWeb, :router
 
   pipeline :api do
-    plug :accepts, ["json"]
+    plug :accepts, ["json", "sh"]
   end
 
   scope "/api", JobsWeb do
     pipe_through :api
-    resources "/tasks", TaskController, only: [:create, :index, :show]
     resources "/jobs", JobController, only: [:create, :index, :show]
   end
 

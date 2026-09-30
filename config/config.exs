@@ -30,6 +30,17 @@ config :logger, :default_formatter,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
+# Register a custom MIME type so jobs can be rendered as a bash script
+config :mime, :types, %{
+  "text/x-shellscript" => ["sh"]
+}
+
+# ".sh" already maps to "application/x-sh" in mime's built-in table;
+# prefer our type for that extension.
+config :mime, :extensions, %{
+  "sh" => "text/x-shellscript"
+}
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"

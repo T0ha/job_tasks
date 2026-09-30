@@ -114,7 +114,7 @@ defmodule Jobs.Tasks do
 
   """
   def list_jobs do
-    raise "TODO"
+    Repo.all(from t in Task, group_by: t.job_uuid, select: t.job_uuid)
   end
 
   @doc """
@@ -145,9 +145,7 @@ defmodule Jobs.Tasks do
   def create_job(attrs) do
     %Job{id: Ecto.UUID.generate()}
     |> Job.changeset(attrs)
-    |> IO.inspect(label: "Job changeset")
     |> Ecto.Changeset.apply_action(:insert)
-    |> IO.inspect(label: "Job after applying changes")
     |> insert_tasks()
     
   end
@@ -161,7 +159,6 @@ defmodule Jobs.Tasks do
       end)
     end)
     |> then(&({:ok, &1}))
-    |> IO.inspect(label: "Job after inserting tasks")
   end
 
   @doc """
